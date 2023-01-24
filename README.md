@@ -1,2 +1,2 @@
 # Neural-Drones
-Neuro-Evolution to evolve drones to fly
+Neuro-Evolution to evolve drones to fly! Training was done in Node.js powered by Neataptic. This project was inspired by John Buffer. You can check out the live demo [Here](https://bobingstern.github.io/Neural-Drones/). Make sure to zoom out if you monitor is too small and disable smoke if your computer is slow. you can also modify the number of ticks per frame to further speed it up. The drone will use whatever neural network you pick (I trained multiple to see different behavior) and will try to fly towards your mouse!
