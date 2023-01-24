@@ -3,8 +3,8 @@ let smoke
 let SCALE = 2
 
 function preload() {
-  flame = loadImage("res/flame.png")
-  smoke = loadImage("res/smoke.png")
+  flame = loadImage("flame.png")
+  smoke = loadImage("smoke.png")
 
 }
 
