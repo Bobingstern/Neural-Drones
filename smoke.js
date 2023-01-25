@@ -82,7 +82,7 @@ Particle.prototype.run = function() {
 Particle.prototype.render = function() {
   push()
   imageMode(CENTER);
-  tint(255, this.lifespan*0.5);
+  tint(255, this.lifespan*0.25);
   let sc = 7/this.total_life * (this.total_life - (this.lifespan+1))
   scale(sc)
   image(this.texture, this.loc.x/sc, this.loc.y/sc);

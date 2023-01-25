@@ -3,8 +3,8 @@ let smoke
 let SCALE = 2
 
 function preload() {
-  flame = loadImage("flame.png")
-  smoke = loadImage("smoke.png")
+  flame = loadImage("res/flame.png")
+  smoke = loadImage("res/smoke.png")
 
 }
 
@@ -130,10 +130,10 @@ class Drone {
       this.time_out += dt
     }
 
-    if (this.inside > 125 * dt) {
+    if (this.inside > 300 * dt) {
       this.inside = 0
       //this.curr_target++
-      this.score += this.points * Math.cos(this.angle) ** 2 * (1 / this.time_out)
+      this.score += this.points * Math.cos(this.angle) ** 2 / (1 + this.time_out)
       this.points = dist(this.targets[this.curr_target].x, this.targets[this.curr_target].y, this.pos.x, this.pos.y)
       this.time_out = 0
     }
@@ -170,7 +170,7 @@ class Drone {
       this.time_out += dt
     }
 
-    if (this.inside > 125 * dt) {
+    if (this.inside > 400 * dt) {
       this.inside = 0
       this.curr_target++
       this.score += 10000 * Math.cos(this.angle) ** 2 * (100 / this.time_out)
@@ -238,7 +238,7 @@ class Drone {
     if (this.smoke_mode == 0){
     this.smoke_system.run()
       if (Math.random() < thruster.power_ratio) {
-        for (let i = 0; i < 3; i++)
+        for (let i = 0; i < 1; i++)
           this.smoke_system.addParticle(dx)
       }
     }
@@ -251,8 +251,8 @@ class Drone {
     rect(0, 0, thruster_width, thruster_height)
 
     let thrust = Math.min(this.getThrustEach()[which == -1 ? 0 : 1], 1000)
-    let flame_height = Math.max(1, 0.2 * (thrust))
-    let flame_width = Math.max(1, 0.1 * (thrust))
+    let flame_height = Math.max(1, 0.18 * (thrust))
+    let flame_width = Math.max(1, 0.08 * (thrust))
     if (Math.random() < 0.5)
       scale(-1, 1)
     image(flame, -flame_width / 2, thruster_height / (which == -1 ? 4 : 4), flame_width, flame_height)
