@@ -121,6 +121,7 @@ class Drone {
     this.not_move_time = 0
     this.time_alive = 0
     this.angle_avg = 0
+    this.time_out_total = 0
   }
   cross(v1, v2) {
     return v1.x * v2.y - v1.y * v2.x;
@@ -162,11 +163,13 @@ class Drone {
     this.angle += this.angular_velocity * dt;
 
     let d = dist(this.targets[this.curr_target].x, this.targets[this.curr_target].y, this.pos.x, this.pos.y)
-    if (d < 30) {
+    if (d < 28) {
       this.inside+=dt
     }
     else {
       this.time_out+=dt
+
+      this.inside = 0
     }
 
     if (this.inside > 125 * dt) {
@@ -175,6 +178,7 @@ class Drone {
       this.score += Math.cos(this.angle) ** 4 * this.points / (1+this.time_out)
       //console.log("Points:"+this.points+","+this.angle+","+this.time_out)
       this.points = dist(this.targets[this.curr_target].x, this.targets[this.curr_target].y, this.pos.x, this.pos.y)
+      this.time_out_total+=this.time_out
       this.time_out = 0
     }
     //Encourage those that are straight and punish the others
@@ -210,7 +214,7 @@ class Drone {
       Math.cos(this.angle),
       this.vel.x * dt,
       this.vel.y * dt,
-      this.angular_velocity * dt] //8
+      this.angular_velocity * dt] //7
     return inputs
   }
   brain(dt) {
@@ -240,7 +244,7 @@ let neat = new neataptic.Neat(
         neataptic.methods.mutation.MOD_ACTIVATION,
       ],
       popsize: 800,
-      mutationRate: 0.3,
+      mutationRate: 0.6,
       mutationAmount: 4,
       elitism: 40,
       // network: new neataptic.architect.Random(
@@ -251,6 +255,16 @@ let neat = new neataptic.Neat(
     }
 );
 
+//Perceptron Only model
+/*
+for (let i=0;i<neat.population.length;i++){
+  let template = neataptic.architect.Perceptron(7, 5, 5, 4)
+  for (let j=0;j<template.nodes.length;j++){
+    template.nodes[j].squash = neataptic.methods.activation.TANH
+  }
+  neat.population[i] = template
+}
+*/
 function randArr(l) {
   let arr = []
   for (let i = 0; i < l; i++) {
@@ -266,6 +280,7 @@ let population = []
 let best = undefined
 let killer = 1
 let bestEver = -Infinity
+
 function populate() {
   targets = []
   for (let i = 0; i < 200; i++) {
@@ -325,7 +340,7 @@ async function draw() {
         }
       }
 
-      console.log('Generation:', neat.generation, '- average score:', neat.getAverage(), "- Highest Score:", neat.getFittest().score);
+      console.log('Generation:', neat.generation, '- average score:', neat.getAverage(), "- Highest Score:", neat.getFittest().score, "- Collected: ", population[highestIndex].curr_target, "- Time out: ", population[highestIndex].time_out_total/(population[highestIndex].curr_target+1));
       neat.sort()
       let newPopulation = []
       for(var i = 0; i < neat.elitism; i++){
@@ -345,15 +360,15 @@ async function draw() {
 }
 
 async function EVOLVE() {
-  if (!fs.existsSync("networks2")){
-    fs.mkdirSync("networks2");
+  if (!fs.existsSync("networks3")){
+    fs.mkdirSync("networks3");
   }
   for (let i = 0; i < 100000; i++) {
     gen_done = false
     await draw()
-    if (i % 3 == 0) {
+    if (i % 10 == 0) {
       console.log("Saving Generation: " + i)
-      fs.writeFileSync('networks2/Generation_' + i + ".txt", JSON.stringify(bestNetwork.toJSON()));
+      fs.writeFileSync('networks3/Generation_' + i + ".txt", JSON.stringify(bestNetwork.toJSON()));
     }
   }
 }

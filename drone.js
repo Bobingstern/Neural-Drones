@@ -3,8 +3,8 @@ let smoke
 let SCALE = 2
 
 function preload() {
-  flame = loadImage("flame.png")
-  smoke = loadImage("smoke.png")
+  flame = loadImage("res/flame.png")
+  smoke = loadImage("res/smoke.png")
 
 }
 
@@ -232,7 +232,7 @@ class Drone {
     let thruster_bottom_pos = rotateToReal(real_pos, new p5.Vector(0, thruster_height - thruster_height / 6), this.angle + thruster.angle * which)
     this.smoke_system.origin = thruster_bottom_pos.copy()
     let dx = p5.Vector.sub(thruster_bottom_pos, real_pos).div(7)
-
+    dx.add(p5.Vector.mult(this.vel, 1/this.vel.mag()))
     
     this.smoke_system.applyForce(dx)
     if (this.smoke_mode == 0){
